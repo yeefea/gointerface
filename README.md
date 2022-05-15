@@ -1,2 +1,7 @@
 # gointerface
-An interface extractor for Go.
+
+`gointerface` is an interface extractor for Go.
+
+
+
+
