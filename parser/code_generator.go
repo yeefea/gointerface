@@ -8,8 +8,9 @@ import (
 )
 
 type InterfaceGenerator struct {
-	Files []*SourceFileInfo
-	Types map[string]struct{}
+	Files   []*SourceFileInfo
+	Types   map[string]struct{}
+	PkgName string
 }
 
 type interfaceRepr struct {
@@ -26,12 +27,16 @@ func (gen *InterfaceGenerator) GenerateCode() (string, error) {
 	sb.WriteString(COMMENT)
 
 	// check the package name and emit package statement
-	pkgName := gen.Files[0].PkgName
-	for _, f := range gen.Files[1:] {
-		if f.PkgName != pkgName {
-			return "", fmt.Errorf("package name not same, %s != %s", f.PkgName, pkgName)
+	pkgName := gen.PkgName
+	if pkgName == "" {
+		pkgName = gen.Files[0].PkgName
+		for _, f := range gen.Files[1:] {
+			if f.PkgName != pkgName {
+				return "", fmt.Errorf("package name not same, %s != %s", f.PkgName, pkgName)
+			}
 		}
 	}
+
 	sb.WriteString("package ")
 	sb.WriteString(pkgName)
 	sb.WriteString("\n")

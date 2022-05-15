@@ -14,11 +14,14 @@ go install github.com/yeefea/gointerface@latest
 
 ```
 Usage of gointerface:
-  -i string
-        Input file or package. By default, the program read from stdin.
+ -i string
+        Input file or directory. By default, the program reads from stdin.
   -o string
         Output file. By default, the program writes content to stdout.
-  -p    Include private methods.
+  -p string
+        Rewrite the package name in the output.
+  -private
+        Include private methods.
   -t string
         Specify the types. Multiple types are separated by comma(,). Extract all types if not specified.
 ```
@@ -125,10 +128,10 @@ The program will write the output to `interface.go`.
 
 ### Extract private methods
 
-Private methods, which start with a lower case letter, are not extracted by default. To extract private methods, use the `-p` option:
+Private methods, which start with a lower case letter, are not extracted by default. To extract private methods, use the `-private` option:
 
 ```bash
-gointerface -i example.go -p
+gointerface -i example.go -private
 ```
 
 Then the private method `privateMethod` will included in the output interface.

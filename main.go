@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/yeefea/gointerface/parser"
@@ -17,19 +18,21 @@ var (
 	inputFile     string
 	outputFile    string
 	types         string
+	pkgName       string
 	private       bool
 	interestTypes map[string]struct{}
 )
 
 func init() {
-	flag.StringVar(&inputFile, "i", "", "Input file or package. By default, the program read from stdin.")
+	flag.StringVar(&inputFile, "i", "", "Input file or directory. By default, the program reads from stdin.")
 	flag.StringVar(&outputFile, "o", "", "Output file. By default, the program writes content to stdout.")
 	flag.StringVar(&types, "t", "", "Specify the types. Multiple types are separated by comma(,). Extract all types if not specified.")
-	flag.BoolVar(&private, "p", false, "Include private methods.")
+	flag.StringVar(&pkgName, "p", "", "Package name.")
+	flag.BoolVar(&private, "private", false, "Include private methods.")
 }
 
 func main() {
-	var fileInfoList []*parser.SourceFileInfo
+
 	flag.Parse()
 
 	if types != "" {
@@ -39,6 +42,8 @@ func main() {
 			interestTypes[t] = struct{}{}
 		}
 	}
+
+	var fileInfoList []*parser.SourceFileInfo
 
 	if inputFile == "" || inputFile == "-" { // read from stdin
 		raw, err := ioutil.ReadAll(os.Stdin)
@@ -62,9 +67,8 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			if len(files) == 0 {
-				panic("package is empty")
-			}
+			// sort files by name
+			sort.Slice(files, func(i, j int) bool { return files[i].Name() < files[j].Name() })
 
 			for _, f := range files {
 				if f.IsDir() {
@@ -84,6 +88,9 @@ func main() {
 				}
 				fileInfoList = append(fileInfoList, fileInfo)
 			}
+			if len(fileInfoList) == 0 {
+				panic("Go file not found")
+			}
 		} else { // is go file
 			input, err := antlr.NewFileStream(inputFile)
 			if err != nil {
@@ -97,7 +104,7 @@ func main() {
 		}
 	}
 
-	gen := parser.InterfaceGenerator{Files: fileInfoList, Types: interestTypes}
+	gen := parser.InterfaceGenerator{Files: fileInfoList, Types: interestTypes, PkgName: pkgName}
 	code, err := gen.GenerateCode()
 	if err != nil {
 		panic(err)
