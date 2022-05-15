@@ -14,7 +14,7 @@ go install github.com/yeefea/gointerface@latest
 
 ```
 Usage of gointerface:
- -i string
+  -i string
         Input file or directory. By default, the program reads from stdin.
   -o string
         Output file. By default, the program writes content to stdout.
