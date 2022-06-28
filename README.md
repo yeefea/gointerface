@@ -48,7 +48,7 @@ Some block comments.
 
 */
 
-// ToJson converts the object to a json bytes.
+// ToJson converts the object to json bytes.
 // some other comments
 func (x *SomeStruct) ToJson(sb strings.Builder) ([]byte, error) {
 	return j.Marshal([]string{"1", "2", "3"})
@@ -109,7 +109,7 @@ type ISomeStruct interface {
 
         */
 
-        // ToJson converts the object to a json bytes.
+        // ToJson converts the object to json bytes.
         // some other comments
         ToJson(sb strings.Builder) ([]byte, error)
 }
@@ -149,7 +149,7 @@ type ISomeStruct interface {
 
         */
 
-        // ToJson converts the object to a json bytes.
+        // ToJson converts the object to json bytes.
         // some other comments
         ToJson(sb strings.Builder) ([]byte, error)
 
